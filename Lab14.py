@@ -1,35 +1,19 @@
 import psycopg2
 import time
 from concurrent.futures import ThreadPoolExecutor
+import database
 
-username = 'musiienko_milena'
-password = 'undrugcat10'
-database = 'DB6_Lab1'
 
-sqldrop = '''
-DROP TABLE IF EXISTS user_counter
-'''
-sqlcreate = '''
-CREATE TABLE user_counter (
-    user_id INT PRIMARY KEY,
-    counter INT,
-    version INT
-)
-'''
-sqlinsert = '''
-INSERT INTO user_counter (user_id, counter, version) VALUES (1, 0, 0)
-'''
-
-conn = psycopg2.connect(user=username, password=password, dbname=database)
+conn = psycopg2.connect(user=database.username, password=database.password, dbname=database.db)
 with conn:                      
     cursor = conn.cursor()
-    cursor.execute(sqldrop)
-    cursor.execute(sqlcreate)
-    cursor.execute(sqlinsert)
+    cursor.execute(database.sqldrop)
+    cursor.execute(database.sqlcreate)
+    cursor.execute(database.sqlinsert)
 
 
 def optimistic_concurrency_control_update(user_thread_id):
-    conn = psycopg2.connect(user=username, password=password, dbname=database)
+    conn = psycopg2.connect(user=database.username, password=database.password, dbname=database.db)
     
     with conn:
         cursor = conn.cursor()
